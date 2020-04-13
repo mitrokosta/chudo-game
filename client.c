@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
   servaddr.sin_port = htons(atoi(argv[2]));
   inet_pton(AF_INET, argv[1], &servaddr.sin_addr);
   int success = connect(sockfd, (void*)&servaddr, sizeof(servaddr));
-  if (success != -1) {
+  if (success == -1) {
     puts("Connection failed");
     return -1;
   }
@@ -31,11 +31,26 @@ int main(int argc, char** argv) {
   while (bytes_read > 0) {
     strncpy(word, buff, BUFF_SIZE);
     unsigned attempts = atoi(buff + word_len + 1);
-    printf("The word is: %s, attempts remaining: %d.\n Please enter your guessed character: ", word, attempts);
-    char letter;
-    scanf("%c", &letter);
-    write(sockfd, &letter, sizeof(letter));
-    bytes_read = read(sockfd, buff, BUFF_SIZE);
+    printf("The word is: %s, attempts remaining: %d.\n", word, attempts);
+    size_t total_len = 0;
+    for (size_t i = 0; i < word_len; ++i) {
+      if (word[i] != '*') {
+        ++total_len;
+      }
+    }
+    if (attempts > 0 && total_len < word_len) {
+      printf("Please enter your character: ");
+      char letter;
+      do {
+        scanf("%c", &letter);
+      } while (!(letter <= 'z' && letter >= 'a'));
+
+      write(sockfd, &letter, sizeof(letter));
+      bytes_read = read(sockfd, buff, BUFF_SIZE);
+    } else {
+      break;
+    }
+
   }
 
   shutdown(sockfd, SHUT_RDWR);

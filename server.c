@@ -148,7 +148,7 @@ void AddPlayer(int epfd, int connfd, void* words, size_t words_len, unsigned wor
   new_player->attempts_num = max_attempts;
   new_event.events = EPOLLIN;
   new_event.data.ptr = new_player;
-  epoll_ctl(epfd, EPOLL_CTL_ADD, new_event.data.fd, &new_event);
+  epoll_ctl(epfd, EPOLL_CTL_ADD, new_player->fd, &new_event);
   SendState(new_player);
 }
 
