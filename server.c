@@ -68,7 +68,6 @@ void ChooseRandomWord(const char* words, size_t words_len, unsigned words_count,
     ++counter;
   }
   strcpy(buff, pch);
-  puts(buff);
   free(cpy);
 }
 
